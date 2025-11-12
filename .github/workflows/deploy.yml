@@ -13,13 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to Vertra IP via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.niyoconstructions.com.au
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          local-dir: ./
-          server-dir: ${{ secrets.FTP_PATH }}
-          protocol: ftp
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p 2683 -H s01ie.syd7.hostingplatform.net.au >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy to Vertra IP via SSH
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p 2683" \
+            ./ niyocons@s01ie.syd7.hostingplatform.net.au:/home/niyocons/public_html/
