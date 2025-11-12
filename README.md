@@ -60,3 +60,50 @@ Notes:
 Customize:
 - Update contact email in js/main.js (mailto).
 - Replace logo in assets/logo.svg.
+
+Quick next steps you ran locally
+- You already initialized and committed the site locally:
+  git init
+  git add .
+  git commit -m "Initial commit — Niyo Constructions site"
+
+If you want the commit author to use your real name/email (recommended)
+1) Set global identity (replace with your details):
+```bash
+git config --global user.name "Jayden Nube"
+git config --global user.email "you@example.com"
+```
+2) Amend the existing commit to reset the author (keeps the same commit message and content):
+```bash
+git commit --amend --reset-author --no-edit
+```
+
+Create & push a GitHub repo (recommended: gh CLI)
+- Install gh: https://cli.github.com/manual/installation
+- Authenticate and create repo, then push:
+```bash
+gh auth login                # follow prompts
+gh repo create niyo-constructions --public --source=. --remote=origin --push
+```
+This creates a GitHub repo, adds `origin`, and pushes your `main` branch.
+
+Alternative: Create repo via GitHub web UI and push manually
+1. On github.com create a new repo named `niyo-constructions` (leave it empty).
+2. Then in your terminal:
+```bash
+# using HTTPS
+git remote add origin https://github.com/<your-username>/niyo-constructions.git
+git push -u origin main
+
+# OR using SSH (if you set up SSH keys)
+git remote add origin git@github.com:<your-username>/niyo-constructions.git
+git push -u origin main
+```
+
+Connect to Netlify (after repo is on GitHub)
+1. Go to https://app.netlify.com/sites -> "New site" -> "Import from Git".
+2. Choose Git provider (GitHub), authorize and select `niyo-constructions`.
+3. Branch to deploy: `main`
+4. Build command: (leave blank)
+5. Publish directory: `.`
+6. Deploy site — Netlify will auto-deploy on future pushes.
