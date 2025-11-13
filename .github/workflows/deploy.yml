@@ -13,15 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -p 2683 -H s01ie.syd7.hostingplatform.net.au >> ~/.ssh/known_hosts 2>/dev/null || true
-
-      - name: Deploy to Vertra IP via SSH
-        run: |
-          rsync -avz --delete \
-            -e "ssh -i ~/.ssh/deploy_key -p 2683" \
-            ./ niyocons@s01ie.syd7.hostingplatform.net.au:/home/niyocons/public_html/
+      - name: Upload to cPanel via FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: 110.232.143.64
+          username: ${{ secrets.CPANEL_USERNAME }}
+          password: ${{ secrets.CPANEL_PASSWORD }}
+          port: 21
+          local-dir: ./
+          server-dir: public_html
+          protocol: ftps
