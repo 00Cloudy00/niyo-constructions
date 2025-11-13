@@ -13,11 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
-      - name: Deploy to Vertra IP via SSH
+      - name: Create deployment archive
         run: |
-          sshpass -p "${{ secrets.SSH_PASSWORD }}" rsync -avz --delete \
-            -e "ssh -o StrictHostKeyChecking=no -p 2683" \
-            ./ niyocons@s01ie.syd7.hostingplatform.net.au:/home/niyocons/public_html/
+          zip -r deploy.zip . -x ".git/*" ".github/*" "node_modules/*"
+
+      - name: Upload to cPanel via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: 110.232.143.64
+          username: ${{ secrets.CPANEL_USERNAME }}
+          password: ${{ secrets.CPANEL_PASSWORD }}
+          port: 21
+          local-dir: ./
+          server-dir: public_html/
+          protocol: ftp
